@@ -5,7 +5,7 @@ import HomePage from './components/HomePage'
 import MemoryGame from './components/games/MemoryGame'
 import ComingSoon from './components/ComingSoon'
 import CursorTrail from './components/CursorTrail'
-import MidiPlayer from './components/MidiPlayer'
+import MP3Player from './components/MP3Player'
 
 const App = () => {
   const [isLoading, setIsLoading] = useState(true)
@@ -181,11 +181,11 @@ const App = () => {
             marginBottom: '40px',
             transition: 'all 0.2s ease'
           }}
-          onMouseOver={(e) => {
-            e.target.style.transform = 'scale(1.05) rotate(-2deg)'
+          onMouseOver={(e: React.MouseEvent<HTMLButtonElement>) => {
+            e.currentTarget.style.transform = 'scale(1.05) rotate(-2deg)'
           }}
-          onMouseOut={(e) => {
-            e.target.style.transform = 'scale(1) rotate(0)'
+          onMouseOut={(e: React.MouseEvent<HTMLButtonElement>) => {
+            e.currentTarget.style.transform = 'scale(1) rotate(0)'
           }}
         >
           Enter Site Now!
@@ -233,7 +233,7 @@ const App = () => {
   return (
     <Router>
       <CursorTrail />
-      <MidiPlayer />
+      <MP3Player />
       <Routes>
         <Route path="/" element={<HomePage />} />
         <Route path="/game/memory" element={<MemoryGame />} />
