@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useCallback } from 'react'
 import { Link } from 'react-router-dom'
 
 type WindowName = 'main' | 'games' | 'guestbook'
@@ -28,6 +28,11 @@ const HomePage = () => {
   const [visitorCount, setVisitorCount] = useState(0)
   const [showGlitter, setShowGlitter] = useState<{ id: number; x: number; y: number }[]>([])
   const [dragInfo, setDragInfo] = useState<{ dragging: boolean; window: WindowName | null; offsetX: number; offsetY: number }>({ dragging: false, window: null, offsetX: 0, offsetY: 0 })
+  const [dogPosition, setDogPosition] = useState({ x: 200, y: 200 })
+  const [dogDragging, setDogDragging] = useState(false)
+  const [dogDragOffset, setDogDragOffset] = useState({ x: 0, y: 0 })
+  const [showWoof, setShowWoof] = useState(false)
+  const dogWidth = 64
   
   // Update clock
   useEffect(() => {
@@ -42,6 +47,30 @@ const HomePage = () => {
   useEffect(() => {
     setVisitorCount(Math.floor(Math.random() * 10000) + 1000)
   }, [])
+  
+  // Set initial dog position to right side on mount
+  useEffect(() => {
+    setDogPosition({
+      x: window.innerWidth - 100,
+      y: 200
+    })
+  }, [])
+  
+  // Animate dog walking when not dragging
+  useEffect(() => {
+    if (!dogDragging) {
+      const interval = setInterval(() => {
+        setDogPosition(pos => {
+          let nextX = pos.x - 1
+          if (nextX < -dogWidth) {
+            nextX = window.innerWidth
+          }
+          return { ...pos, x: nextX }
+        })
+      }, 20)
+      return () => clearInterval(interval)
+    }
+  }, [dogDragging])
   
   // Add glitter effect on mouse move
   const handleMouseMove = (e: React.MouseEvent<HTMLDivElement>) => {
@@ -166,8 +195,75 @@ const HomePage = () => {
     { id: 'sound', title: 'Sound Board', description: 'Play with nostalgic sounds from the early internet!' }
   ]
   
+  // Mouse event handlers for dog drag
+  const handleDogMouseMove = useCallback((e: MouseEvent) => {
+    setDogPosition(pos => ({
+      x: e.clientX - dogDragOffset.x,
+      y: e.clientY - dogDragOffset.y
+    }))
+  }, [dogDragOffset])
+
+  const handleDogMouseUp = useCallback(() => {
+    setDogDragging(false)
+    document.removeEventListener('mousemove', handleDogMouseMove)
+    document.removeEventListener('mouseup', handleDogMouseUp)
+  }, [handleDogMouseMove])
+
+  const handleDogMouseDown = (e: React.MouseEvent<HTMLImageElement>) => {
+    setDogDragging(true)
+    setDogDragOffset({
+      x: e.clientX - dogPosition.x,
+      y: e.clientY - dogPosition.y
+    })
+    setShowWoof(true)
+    setTimeout(() => setShowWoof(false), 1000)
+    document.addEventListener('mousemove', handleDogMouseMove)
+    document.addEventListener('mouseup', handleDogMouseUp)
+  }
+  
   return (
     <div id="desktop" onMouseMove={handleMouseMove}>
+      {/* Draggable Dog GIF */}
+      <div style={{
+        position: 'absolute',
+        left: dogPosition.x,
+        top: dogPosition.y,
+        zIndex: 9999,
+        userSelect: 'none',
+        pointerEvents: 'auto',
+      }}>
+        {showWoof && (
+          <div style={{
+            position: 'absolute',
+            left: '50%',
+            top: '-30px',
+            transform: 'translateX(-50%)',
+            background: 'white',
+            border: '1px solid #ccc',
+            borderRadius: '12px',
+            padding: '2px 10px',
+            fontSize: '14px',
+            boxShadow: '1px 1px 4px rgba(0,0,0,0.1)',
+            pointerEvents: 'none',
+            whiteSpace: 'nowrap',
+          }}>
+            woof
+          </div>
+        )}
+        <img
+          src="/icons/dog.gif"
+          alt="Dog"
+          style={{
+            width: '64px',
+            height: '64px',
+            cursor: 'grab',
+            userSelect: 'none',
+            pointerEvents: 'auto',
+          }}
+          onMouseDown={handleDogMouseDown}
+          draggable={false}
+        />
+      </div>
       {/* Sidebar */}
       <div className="sidebar">
         <div className="sidebar-item" onClick={() => openWindow('main')}>
