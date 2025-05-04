@@ -3,6 +3,7 @@ import { BrowserRouter as Router, Routes, Route } from 'react-router-dom'
 import './App.css'
 import HomePage from './components/HomePage'
 import MemoryGame from './components/games/MemoryGame'
+import SnakeGame from './components/games/SnakeGame'
 import ComingSoon from './components/ComingSoon'
 import CursorTrail from './components/CursorTrail'
 import MP3Player from './components/MP3Player'
@@ -237,6 +238,7 @@ const App = () => {
       <Routes>
         <Route path="/" element={<HomePage />} />
         <Route path="/game/memory" element={<MemoryGame />} />
+        <Route path="/game/snake" element={<SnakeGame />} />
         <Route path="/game/:id" element={<ComingSoon />} />
       </Routes>
     </Router>

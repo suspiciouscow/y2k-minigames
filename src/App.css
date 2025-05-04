@@ -222,9 +222,10 @@ body {
 }
 
 .sidebar-item img {
-  width: 40px;
-  height: 40px;
+  width: 32px;
+  height: 32px;
   margin-bottom: 5px;
+  object-fit: contain;
 }
 
 .sidebar-label {

@@ -184,11 +184,6 @@ const HomePage = () => {
           <img src="/icons/guestbook.png" alt="Guestbook" />
           <div className="sidebar-label">Guestbook</div>
         </div>
-        
-        <div className="sidebar-item">
-          <img src="/icons/help.png" alt="Help" />
-          <div className="sidebar-label">Help</div>
-        </div>
       </div>
       
       {/* Main Window */}
